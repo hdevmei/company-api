@@ -258,46 +258,41 @@ def meterDatosInicialesEmpleados():
 ####################################################################################
 
 
-crearTablaFranquicia()
-meterDatosIncialesFranquicia()
+#crearTablaFranquicia()
+#meterDatosIncialesFranquicia()
 
 
 
-crearTablaEstablecimientos()
-meterDatosInicialesEstablecimientos()
+#crearTablaEstablecimientos()
+#meterDatosInicialesEstablecimientos()
 
 
 
-crearTablaClientes()
-meterDatosInicialesClientes()
+#crearTablaClientes()
+#meterDatosInicialesClientes()
 
 
 
-crearTablaInicialReclamaciones()
-meterDatosIncialesReclamaciones()
+#crearTablaInicialReclamaciones()
+#meterDatosIncialesReclamaciones()
 
 
 
-crearTablaCompras()
-meterDatosInicialesCompras()
+#crearTablaCompras()
+#meterDatosInicialesCompras()
 
 
 
-crearTablaDepartamentos()
-meterDatosInicialesDepartamentos()
+#crearTablaDepartamentos()
+#meterDatosInicialesDepartamentos()
 
 
-crearTablaIncidencias()
-meterDatosInicialesIncidencias()
+#crearTablaIncidencias()
+#meterDatosInicialesIncidencias()
 
 
-crearTablaEmpleados()
-meterDatosInicialesEmpleados()
-
-
-
-
-
+#crearTablaEmpleados()
+#meterDatosInicialesEmpleados()
 
 
 #asignar las claves foráneas a las tablas
@@ -307,3 +302,37 @@ meterDatosInicialesEmpleados()
 
 #pedir si el usuario quiere ver datos, crear datos, eliminar datos o cambiar datos
 
+
+
+def menuOpcionesPrincipal():
+  continuar = True
+  while(continuar):
+      opcionCorrecta = False
+      while(not opcionCorrecta):
+        print("=======MENÚ PRINCIPAL=====================")
+        print("Elige una opción")
+        print("1. Elegir una tabla y MOSTRAR sus DATOS")
+        print("2. Elegir una tabla e INSERTAR DATOS")
+        print("3. Elegir una tabla y BORRAR sus DATOS")
+        print("4. Elegir uan tabla y modificar sus DATOS")
+        print("salir del programa")
+        print("===========================================")
+        opcion = int(input("selecciona una opción: "))
+        
+        if opcion < 2 or opcion > 5 :
+          print("Opción incorreca, introduce otra vez")
+        elif opcion == 5:
+          continuar = False
+          print("Has salido del programa")
+          break
+        else:
+          opcionCorrecta = True
+          ejecutarOpcionMenuPrincipal(opcion)
+      
+
+
+
+
+def ejecutarOpcionMenuPrincipal(opcion):
+  print(opcion)
+  
