@@ -303,23 +303,22 @@ def meterDatosInicialesEmpleados():
 #pedir si el usuario quiere ver datos, crear datos, eliminar datos o cambiar datos
 
 
-
 def menuOpcionesPrincipal():
   continuar = True
   while(continuar):
-      opcionCorrecta = False
-      while(not opcionCorrecta):
+    opcionCorrecta = False
+    while(not opcionCorrecta):
         print("=======MENÚ PRINCIPAL=====================")
         print("Elige una opción")
         print("1. Elegir una tabla y MOSTRAR sus DATOS")
         print("2. Elegir una tabla e INSERTAR DATOS")
         print("3. Elegir una tabla y BORRAR sus DATOS")
-        print("4. Elegir uan tabla y modificar sus DATOS")
-        print("salir del programa")
+        print("4. Elegir una tabla y modificar sus DATOS")
+        print("5. Salir del programa")
         print("===========================================")
         opcion = int(input("selecciona una opción: "))
         
-        if opcion < 2 or opcion > 5 :
+        if opcion < 1 or opcion > 5 :
           print("Opción incorreca, introduce otra vez")
         elif opcion == 5:
           continuar = False
@@ -328,11 +327,34 @@ def menuOpcionesPrincipal():
         else:
           opcionCorrecta = True
           ejecutarOpcionMenuPrincipal(opcion)
-      
 
 
 
-
+#ejecutar opcion elegida por el usuario primer paso
 def ejecutarOpcionMenuPrincipal(opcion):
-  print(opcion)
   
+  if opcion ==1:
+    try: 
+      print("llamar a la funcion sql mostrar titulo de las tablas")
+      mostrarTitulosTablas()
+    except:
+      print("error al buscar los titulos de las tablas")
+
+
+
+
+def mostrarTitulosTablas():
+  print("Existen las siguientes tablas: ")
+  global mycursor
+  mycursor.execute("""SHOW TABLES""")
+  myresult = mycursor.fetchall()
+  for x in myresult:
+    print(x)
+
+
+
+
+menuOpcionesPrincipal()
+
+
+
