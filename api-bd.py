@@ -254,7 +254,6 @@ def meterDatosInicialesEmpleados():
 
 
 
-
 ####################################################################################
 
 
@@ -308,19 +307,22 @@ def menuOpcionesPrincipal():
   while(continuar):
     opcionCorrecta = False
     while(not opcionCorrecta):
-        print("=======MENÚ PRINCIPAL=====================")
+      
+        print("\n \n \n \n =======MENÚ PRINCIPAL=====================")
         print("Elige una opción")
         print("1. Elegir una tabla y MOSTRAR sus DATOS")
-        print("2. Elegir una tabla e INSERTAR DATOS")
+        print("2. Elegir una tabla e INSERTAR ")
         print("3. Elegir una tabla y BORRAR sus DATOS")
         print("4. Elegir una tabla y modificar sus DATOS")
-        print("5. Salir del programa")
+        print("5. Crear tabla")
+        print("6. Borrar Tabla")
+        print("7. Salir del programa")
         print("===========================================")
         opcion = int(input("selecciona una opción: "))
         
-        if opcion < 1 or opcion > 5 :
+        if opcion < 1 or opcion > 7 :
           print("Opción incorreca, introduce otra vez")
-        elif opcion == 5:
+        elif opcion == 7:
           continuar = False
           print("Has salido del programa")
           break
@@ -330,31 +332,103 @@ def menuOpcionesPrincipal():
 
 
 
-#ejecutar opcion elegida por el usuario primer paso
 def ejecutarOpcionMenuPrincipal(opcion):
   
   if opcion ==1:
-    try: 
-      print("llamar a la funcion sql mostrar titulo de las tablas")
-      mostrarTitulosTablas()
-    except:
-      print("error al buscar los titulos de las tablas")
+      mostrarDatosTabla()
+  elif opcion == 2:
+      insertarDatosTabla()
+  elif opcion == 6:
+      borrarTabla()
+      
 
 
+##### Funcion ver que tablas hay y será compartida
 
-
-def mostrarTitulosTablas():
-  print("Existen las siguientes tablas: ")
+def mostrarNombreTablas():
   global mycursor
   mycursor.execute("""SHOW TABLES""")
   myresult = mycursor.fetchall()
+  print("-----------------------------------------------")
   for x in myresult:
     print(x)
+  print("-----------------------------------------------")
+
+###########
+
+def mostrarDatosTabla():
+  mostrarNombreTablas()
+  tablaParaVerDatos = input("de que tabla quieres ver los datos: ")
+  global mycursor
+  mycursor.execute(f"""SELECT * FROM {tablaParaVerDatos}""")
+  myresult = mycursor.fetchall()
+  print("-----------------------------------------------")
+  for x in myresult:
+    print(x)
+  print("-----------------------------------------------")
 
 
 
 
+#mal
+def insertarDatosTabla():
+  mostrarNombreTablas()
+
+  tablaParaInsertarDatos = input("en qué tabla quieres insertar datos: ")
+  numeroDatosInsertar = int(input("¿cuantos elementos nuevos quieres insertar?: "))
+  print("cada elemento nuevo tiene que tener los siguientes atributos")
+  global mycursor
+  mycursor.execute(f"""SELECT Column_name
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_NAME = N'{tablaParaInsertarDatos}' ORDER BY ORDINAL_POSITION LIMIT 1
+  """)
+  tuplaNombreColumnas = mycursor.fetchall()
+  #for x in myresult:
+  # print(x)
+  print(tuplaNombreColumnas)
+
+  longitudCampoDatos = len(tuplaNombreColumnas)
+  print(longitudCampoDatos)
+
+  print("Introduce correctamente los atributos de los elementos por orden")
+  #insertar datos
+  indiceDatoNuevo = 1
+  while indiceDatoNuevo <= numeroDatosInsertar:
+    
+    print(f"Introduce ORDENADAMENTE las propiedades del elemento {indiceDatoNuevo}")
+    valoresElementoUsuarioLista = []
+    #creamos una lista pero la convertirmos luego a tupla
+    campoMetido = 0
+    while campoMetido <= longitudCampoDatos-1:
+      propiedadNueva = input("Introduce la propiedad nueva: ")
+      valoresElementoUsuarioLista.append(propiedadNueva)
+      print(valoresElementoUsuarioLista)
+      campoMetido += 1
+    indiceDatoNuevo += 1
+    valoresElementosUsuarioTupla = tuple(valoresElementoUsuarioLista)
+    print(valoresElementosUsuarioTupla)
+    
+    
+    
+    sql = (f"""INSERT INTO {tablaParaInsertarDatos} {tuplaNombreColumnas} VAlUES {valoresElementosUsuarioTupla}""")
+    print(sql)
+    mydb.commit()
+
+
+
+
+
+def borrarTabla():
+  print("queremos borrar una tabla")
+  tablaParaBorrar = input("¿Qué tabla quieres borrar? ")
+  try:
+    mycursor.execute(f"DROP TABLE {tablaParaBorrar}")
+    mydb.commit
+    print("tabla {compras} borrada")
+  except:
+    print(f"La tabla  {tablaParaBorrar} no existe")
+  
+  
+  
 menuOpcionesPrincipal()
-
-
 
