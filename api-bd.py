@@ -308,7 +308,7 @@ def menuOpcionesPrincipal():
     opcionCorrecta = False
     while(not opcionCorrecta):
       
-        print("\n \n \n \n =======MENÚ PRINCIPAL=====================")
+        print("\n \n \n \n =======  MENÚ PRINCIPAL  =====================")
         print("Elige una opción")
         print("1. Elegir una tabla y MOSTRAR sus DATOS")
         print("2. Elegir una tabla e INSERTAR ")
@@ -320,6 +320,7 @@ def menuOpcionesPrincipal():
         print("===========================================")
         opcion = int(input("selecciona una opción: "))
         
+  
         if opcion < 1 or opcion > 7 :
           print("Opción incorreca, introduce otra vez")
         elif opcion == 7:
@@ -329,6 +330,8 @@ def menuOpcionesPrincipal():
         else:
           opcionCorrecta = True
           ejecutarOpcionMenuPrincipal(opcion)
+      
+          
 
 
 
@@ -338,6 +341,8 @@ def ejecutarOpcionMenuPrincipal(opcion):
       mostrarDatosTabla()
   elif opcion == 2:
       insertarDatosTabla()
+  elif opcion == 3:
+    borrarDatosDeUnaTabla()
   elif opcion == 6:
       borrarTabla()
       
@@ -350,6 +355,7 @@ def mostrarNombreTablas():
   mycursor.execute("""SHOW TABLES""")
   myresult = mycursor.fetchall()
   print("-----------------------------------------------")
+  print("Existen las siguientes tablas")
   for x in myresult:
     print(x)
   print("-----------------------------------------------")
@@ -358,14 +364,17 @@ def mostrarNombreTablas():
 
 def mostrarDatosTabla():
   mostrarNombreTablas()
-  tablaParaVerDatos = input("de que tabla quieres ver los datos: ")
-  global mycursor
-  mycursor.execute(f"""SELECT * FROM {tablaParaVerDatos}""")
-  myresult = mycursor.fetchall()
-  print("-----------------------------------------------")
-  for x in myresult:
-    print(x)
-  print("-----------------------------------------------")
+  try:
+    tablaParaVerDatos = input("de que tabla quieres ver los datos: ")
+    global mycursor
+    mycursor.execute(f"""SELECT * FROM {tablaParaVerDatos}""")
+    myresult = mycursor.fetchall()
+    print("-----------------------------------------------")
+    for x in myresult:
+      print(x)
+    print("-----------------------------------------------")
+  except:
+    print(f"La tabla {tablaParaVerDatos} no existe")
 
 
 
@@ -419,16 +428,55 @@ def insertarDatosTabla():
 
 
 def borrarTabla():
-  print("queremos borrar una tabla")
+  mostrarNombreTablas()
   tablaParaBorrar = input("¿Qué tabla quieres borrar? ")
   try:
     mycursor.execute(f"DROP TABLE {tablaParaBorrar}")
     mydb.commit
-    print("tabla {compras} borrada")
+    print(f"tabla {tablaParaBorrar} borrada")
   except:
     print(f"La tabla  {tablaParaBorrar} no existe")
+
+
+
+
+
+def borrarDatosDeUnaTabla():
+  mostrarNombreTablas()
   
+  tablaParaBorrarDatos = input("de que tabla quieres borrar los datos: ")
+  numeroElementosEliminar = int(input("¿cuantos elementos quires eliminar? :  "))
+  global mycursor
+  mycursor.execute(f"""SELECT * FROM {tablaParaBorrarDatos}""")
+  myresult = mycursor.fetchall()
+  print("-----------------------------------------------")
+  for x in myresult:
+      print(x)
+  print("-----------------------------------------------")
   
-  
+  indiceElementoBorrar = 1
+  while indiceElementoBorrar <= numeroElementosEliminar:
+  #sql borrar dato de tabla
+    id_deElementoBorrar = input("Dime el id del elemento que quieres borrar: ")
+    #borro la s del nombre de la tabla para poder usarlo como el nombre del id (id_nombreTablaSinS)
+    #el nombre de la tabla en plural y el nombre del id de la clave foránea en singular
+    nombreId = tablaParaBorrarDatos[:-1]
+    sql = f""" DELETE FROM {tablaParaBorrarDatos}
+    WHERE id_{nombreId} = "{id_deElementoBorrar}"
+    """
+    mycursor.execute(sql)
+    mydb.commit()
+    indiceElementoBorrar += 1
+    print(mycursor.rowcount, "tablas borradas")
+
+
+
 menuOpcionesPrincipal()
 
+
+
+#pendientes
+#hacer que al mostrar los datos de una tabla se muestre también el nombre del campo
+#try except para borrar elementos de una tabla 
+#try except menu principal
+#intentar meter en una funcion enseñar los campos de una tabla
