@@ -256,44 +256,44 @@ def meterDatosInicialesEmpleados():
 
 ####################################################################################
 
-
-#crearTablaFranquicia()
-#meterDatosIncialesFranquicia()
-
-
-
-#crearTablaEstablecimientos()
-#meterDatosInicialesEstablecimientos()
+"""""
+crearTablaFranquicia()
+meterDatosIncialesFranquicia()
 
 
 
-#crearTablaClientes()
-#meterDatosInicialesClientes()
+crearTablaEstablecimientos()
+meterDatosInicialesEstablecimientos()
 
 
 
-#crearTablaInicialReclamaciones()
-#meterDatosIncialesReclamaciones()
+crearTablaClientes()
+meterDatosInicialesClientes()
 
 
 
-#crearTablaCompras()
-#meterDatosInicialesCompras()
+crearTablaInicialReclamaciones()
+meterDatosIncialesReclamaciones()
 
 
 
-#crearTablaDepartamentos()
-#meterDatosInicialesDepartamentos()
+crearTablaCompras()
+meterDatosInicialesCompras()
 
 
-#crearTablaIncidencias()
-#meterDatosInicialesIncidencias()
+
+crearTablaDepartamentos()
+meterDatosInicialesDepartamentos()
 
 
-#crearTablaEmpleados()
-#meterDatosInicialesEmpleados()
+crearTablaIncidencias()
+meterDatosInicialesIncidencias()
 
 
+crearTablaEmpleados()
+meterDatosInicialesEmpleados()
+
+"""
 #asignar las claves foráneas a las tablas
 
 
@@ -318,9 +318,10 @@ def menuOpcionesPrincipal():
         print("6. Borrar Tabla")
         print("7. Salir del programa")
         print("===========================================")
-        opcion = int(input("selecciona una opción: "))
         
-  
+        
+       # try:
+        opcion = int(input("selecciona una opción: "))
         if opcion < 1 or opcion > 7 :
           print("Opción incorreca, introduce otra vez")
         elif opcion == 7:
@@ -330,8 +331,9 @@ def menuOpcionesPrincipal():
         else:
           opcionCorrecta = True
           ejecutarOpcionMenuPrincipal(opcion)
-      
-          
+        #except:
+        #print("Error intente de nuevo")
+        opcionCorrecta = False
 
 
 
@@ -343,6 +345,8 @@ def ejecutarOpcionMenuPrincipal(opcion):
       insertarDatosTabla()
   elif opcion == 3:
     borrarDatosDeUnaTabla()
+  elif opcion == 5:
+    crearNuevaTabla()
   elif opcion == 6:
       borrarTabla()
       
@@ -389,11 +393,10 @@ def insertarDatosTabla():
   global mycursor
   mycursor.execute(f"""SELECT Column_name
   FROM INFORMATION_SCHEMA.COLUMNS
-  WHERE TABLE_NAME = N'{tablaParaInsertarDatos}' ORDER BY ORDINAL_POSITION LIMIT 1
+  WHERE TABLE_NAME = N'{tablaParaInsertarDatos}' ORDER BY ORDINAL_POSITION 
   """)
   tuplaNombreColumnas = mycursor.fetchall()
-  #for x in myresult:
-  # print(x)
+  
   print(tuplaNombreColumnas)
 
   longitudCampoDatos = len(tuplaNombreColumnas)
@@ -443,31 +446,81 @@ def borrarTabla():
 
 def borrarDatosDeUnaTabla():
   mostrarNombreTablas()
-  
-  tablaParaBorrarDatos = input("de que tabla quieres borrar los datos: ")
-  numeroElementosEliminar = int(input("¿cuantos elementos quires eliminar? :  "))
+  try:  
+    tablaParaBorrarDatos = input("de que tabla quieres borrar los datos: ")
+    numeroElementosEliminar = int(input("¿cuantos elementos quieres eliminar? :  "))
+    #muestra informacion tabla
+    global mycursor
+    mycursor.execute(f"""SELECT * FROM {tablaParaBorrarDatos}""")
+    myresult = mycursor.fetchall()
+    print("-----------------------------------------------")
+    for x in myresult:
+        print(x)
+    print("-----------------------------------------------")
+    
+    indiceElementoBorrar = 1
+    while indiceElementoBorrar <= numeroElementosEliminar:
+    #sql borrar dato de tabla
+      id_deElementoBorrar = input("Dime el id del elemento que quieres borrar: ")
+      #borro la s del nombre de la tabla para poder usarlo como el nombre del id (id_nombreTablaSinS)
+      #el nombre de la tabla en plural y el nombre del id de la clave foránea en singular
+      nombreId = tablaParaBorrarDatos[:-1]
+      sql = f""" DELETE FROM {tablaParaBorrarDatos}
+      WHERE id_{nombreId} = "{id_deElementoBorrar}"
+      """
+      mycursor.execute(sql)
+      mydb.commit()
+      indiceElementoBorrar += 1
+      print(mycursor.rowcount, "elemento(s) borrado(s)")
+  except:
+    print("Error al borrar tablas")
+
+
+
+
+def crearNuevaTabla():
+    try:
+      print("queremos crear nueva tabla")
+      nombreTabla = input("Dime el nombre de la tabla: ")
+      sql = ' CREATE TABLE '
+      sql = sql + nombreTabla + " ("
+      print(sql)
+      numeroCamposTabla = int(input("¿Cuántos campos tiene la tabla?: "))
+      for i in range(numeroCamposTabla):
+        campoNombre = input("nuevo campo: ")
+        sql = sql+ "`" + campoNombre + "`" + " "
+        tipoVariable = input("tipo variable: \n (si es auto incremental escribe AUTO_INCREMENT al lado) \n (si es clave priamria escribe PRIMARY KEY al lado): \n")
+        sql = sql + tipoVariable + ", "
+      
+      #codigo sql obtenido  
+      sql = sql[:-2] + ')'
+      global mycursor
+      mycursor.execute(sql)
+      mydb.commit
+      print("Tabla " +  nombreTabla  + " creada correctamente")
+
+    except:
+      print("Error al crear la tabla")
+
+
+
+def sqlPrueba():
+  # sql LIMT 1 ES PARA QUE SOLO SE MUESTRE UN ELEMENTO
+  print("cada elemento nuevo tiene que tener los siguientes atributos")
   global mycursor
-  mycursor.execute(f"""SELECT * FROM {tablaParaBorrarDatos}""")
+  mycursor.execute(f"""SELECT Column_name
+  FROM INFORMATION_SCHEMA.COLUMNS
+  WHERE TABLE_NAME = N'reclamaciones' ORDER BY ORDINAL_POSITION
+  """)
   myresult = mycursor.fetchall()
-  print("-----------------------------------------------")
+
   for x in myresult:
-      print(x)
-  print("-----------------------------------------------")
+    print(x)
   
-  indiceElementoBorrar = 1
-  while indiceElementoBorrar <= numeroElementosEliminar:
-  #sql borrar dato de tabla
-    id_deElementoBorrar = input("Dime el id del elemento que quieres borrar: ")
-    #borro la s del nombre de la tabla para poder usarlo como el nombre del id (id_nombreTablaSinS)
-    #el nombre de la tabla en plural y el nombre del id de la clave foránea en singular
-    nombreId = tablaParaBorrarDatos[:-1]
-    sql = f""" DELETE FROM {tablaParaBorrarDatos}
-    WHERE id_{nombreId} = "{id_deElementoBorrar}"
-    """
-    mycursor.execute(sql)
-    mydb.commit()
-    indiceElementoBorrar += 1
-    print(mycursor.rowcount, "tablas borradas")
+  
+
+
+#sqlPrueba()
 
 
 
@@ -480,3 +533,12 @@ menuOpcionesPrincipal()
 #try except para borrar elementos de una tabla 
 #try except menu principal
 #intentar meter en una funcion enseñar los campos de una tabla
+
+
+
+#preguntas fionn
+#los ejercicios de las plantas eran diccionarios pero esto son tuplas
+#como hacer lo del id autoincrement
+
+
+
