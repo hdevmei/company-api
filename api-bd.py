@@ -13,7 +13,6 @@ mycursor = mydb.cursor()
 
 #crear tablas con datos iniciales
 
-
 #franquicia
 def crearTablaFranquicia():
   global mycursor
@@ -156,7 +155,6 @@ def meterDatosInicialesCompras():
   mycursor.executemany(sql, val)
   mydb.commit()
   
-#departamentos
 def crearTablaDepartamentos():
   global mycursor
   mycursor.execute(""" CREATE TABLE departamentos(
@@ -253,11 +251,6 @@ def meterDatosInicialesEmpleados():
 
 
 
-
-
-#pedir si el usuario quiere ver datos, crear datos, eliminar datos o cambiar datos
-
-
 def menuOpcionesPrincipal():
   continuar = True
   while(continuar):
@@ -285,9 +278,7 @@ def menuOpcionesPrincipal():
           break
         else:
           opcionCorrecta = True
-          ejecutarOpcionMenuPrincipal(opcion)
-        #except:
-        #print("Error intente de nuevo")
+ 
         opcionCorrecta = False
 
 
@@ -450,7 +441,7 @@ def borrarDatosDeUnaTabla():
     #sql borrar dato de tabla
       id_deElementoBorrar = input("Dime el id del elemento que quieres borrar: ")
       #borro la s del nombre de la tabla para poder usarlo como el nombre del id (id_nombreTablaSinS)
-      #el nombre de la tabla en plural y el nombre del id de la clave foránea en singular
+      #el nombre de la tabla en plural y el nombre del id de la clave primaria en singular
       nombreId = tablaParaBorrarDatos[:-1]
       sql = f""" DELETE FROM {tablaParaBorrarDatos}
       WHERE id_{nombreId} = "{id_deElementoBorrar}"
