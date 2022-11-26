@@ -292,8 +292,8 @@ meterDatosInicialesIncidencias()
 
 crearTablaEmpleados()
 meterDatosInicialesEmpleados()
-
 """
+
 #asignar las claves foráneas a las tablas
 
 
@@ -376,6 +376,8 @@ def mostrarDatosTabla():
     print("-----------------------------------------------")
     for x in myresult:
       print(x)
+    if len(myresult) == 0:
+      print(f"La tabla está {tablaParaVerDatos} está vacía")
     print("-----------------------------------------------")
   except:
     print(f"La tabla {tablaParaVerDatos} no existe")
@@ -383,48 +385,51 @@ def mostrarDatosTabla():
 
 
 
-#mal
 def insertarDatosTabla():
   mostrarNombreTablas()
 
   tablaParaInsertarDatos = input("en qué tabla quieres insertar datos: ")
-  numeroDatosInsertar = int(input("¿cuantos elementos nuevos quieres insertar?: "))
+  numeroDatosInsertar = int(input("¿cuantos elementos nuevos quieres insertar?: \n"))
   print("cada elemento nuevo tiene que tener los siguientes atributos")
   global mycursor
-  mycursor.execute(f"""SELECT Column_name
-  FROM INFORMATION_SCHEMA.COLUMNS
-  WHERE TABLE_NAME = N'{tablaParaInsertarDatos}' ORDER BY ORDINAL_POSITION 
+  mycursor.execute(f"""DESCRIBE {tablaParaInsertarDatos}
   """)
-  tuplaNombreColumnas = mycursor.fetchall()
   
-  print(tuplaNombreColumnas)
-
+  tuplaNombreColumnas = mycursor.fetchall()
+  for x in tuplaNombreColumnas:
+    print(x)
+    
+  print("")
   longitudCampoDatos = len(tuplaNombreColumnas)
-  print(longitudCampoDatos)
 
-  print("Introduce correctamente los atributos de los elementos por orden")
-  #insertar datos
-  indiceDatoNuevo = 1
-  while indiceDatoNuevo <= numeroDatosInsertar:
+  try:
+    print(f"el id_{tablaParaInsertarDatos} se pone solo\n")
+    #insertar datos
+    indiceDatoNuevo = 1
+    while indiceDatoNuevo <= numeroDatosInsertar:
+      print(f"Introduce los datos del elemento {indiceDatoNuevo}")
+      sql = f"INSERT INTO {tablaParaInsertarDatos} ("
+      valuesS = ""
+      nuevosValores = []
+      for x in range (1, longitudCampoDatos):
+        print(tuplaNombreColumnas[x][0])
+        nuevosValores.append(input())
+        sql = sql + str(tuplaNombreColumnas[x][0])
+        valuesS = valuesS+"%s" 
+        if x < longitudCampoDatos -1:
+          sql = sql + ","
+          valuesS = valuesS+ ", "
+      sql = sql  + ") VALUES (" + valuesS + ")"
+      val = nuevosValores
+      
+      mycursor.execute(sql, val)  
+      mydb.commit() 
+      print(f"Elmento {indiceDatoNuevo} intrducido correctamente\n")
+      indiceDatoNuevo += 1
     
-    print(f"Introduce ORDENADAMENTE las propiedades del elemento {indiceDatoNuevo}")
-    valoresElementoUsuarioLista = []
-    #creamos una lista pero la convertirmos luego a tupla
-    campoMetido = 0
-    while campoMetido <= longitudCampoDatos-1:
-      propiedadNueva = input("Introduce la propiedad nueva: ")
-      valoresElementoUsuarioLista.append(propiedadNueva)
-      print(valoresElementoUsuarioLista)
-      campoMetido += 1
-    indiceDatoNuevo += 1
-    valoresElementosUsuarioTupla = tuple(valoresElementoUsuarioLista)
-    print(valoresElementosUsuarioTupla)
-    
-    
-    
-    sql = (f"""INSERT INTO {tablaParaInsertarDatos} {tuplaNombreColumnas} VAlUES {valoresElementosUsuarioTupla}""")
-    print(sql)
-    mydb.commit()
+  except: 
+    print("Error al insertar datos")
+  
 
 
 
@@ -489,7 +494,7 @@ def crearNuevaTabla():
       for i in range(numeroCamposTabla):
         campoNombre = input("nuevo campo: ")
         sql = sql+ "`" + campoNombre + "`" + " "
-        tipoVariable = input("tipo variable: \n (si es auto incremental escribe AUTO_INCREMENT al lado) \n (si es clave priamria escribe PRIMARY KEY al lado): \n")
+        tipoVariable = input("tipo variable: \n (si es auto incremental escribe AUTO_INCREMENT al lado) \n (si es clave primaria escribe PRIMARY KEY al lado): \n")
         sql = sql + tipoVariable + ", "
       
       #codigo sql obtenido  
@@ -508,9 +513,7 @@ def sqlPrueba():
   # sql LIMT 1 ES PARA QUE SOLO SE MUESTRE UN ELEMENTO
   print("cada elemento nuevo tiene que tener los siguientes atributos")
   global mycursor
-  mycursor.execute(f"""SELECT Column_name
-  FROM INFORMATION_SCHEMA.COLUMNS
-  WHERE TABLE_NAME = N'reclamaciones' ORDER BY ORDINAL_POSITION
+  mycursor.execute(f"""DESCRIBE franquicia
   """)
   myresult = mycursor.fetchall()
 
@@ -521,8 +524,6 @@ def sqlPrueba():
 
 
 #sqlPrueba()
-
-
 
 menuOpcionesPrincipal()
 
@@ -536,9 +537,16 @@ menuOpcionesPrincipal()
 
 
 
-#preguntas fionn
-#los ejercicios de las plantas eran diccionarios pero esto son tuplas
-#como hacer lo del id autoincrement
 
 
 
+
+"""
+1. Elegir una tabla y MOSTRAR sus DATOS               HECHO
+2. Elegir una tabla e INSERTAR                        HECHO          
+3. Elegir una tabla y BORRAR sus DATOS
+4. Elegir una tabla y modificar sus DATOS
+5. Crear tabla                                        HECHO
+6. Borrar Tabla                                       HECHO
+7. Salir del programa                                 HECHO
+"""
