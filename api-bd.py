@@ -254,51 +254,6 @@ def meterDatosInicialesEmpleados():
 
 
 
-####################################################################################
-
-"""""
-crearTablaFranquicia()
-meterDatosIncialesFranquicia()
-
-
-
-crearTablaEstablecimientos()
-meterDatosInicialesEstablecimientos()
-
-
-
-crearTablaClientes()
-meterDatosInicialesClientes()
-
-
-
-crearTablaInicialReclamaciones()
-meterDatosIncialesReclamaciones()
-
-
-
-crearTablaCompras()
-meterDatosInicialesCompras()
-
-
-
-crearTablaDepartamentos()
-meterDatosInicialesDepartamentos()
-
-
-crearTablaIncidencias()
-meterDatosInicialesIncidencias()
-
-
-crearTablaEmpleados()
-meterDatosInicialesEmpleados()
-
-"""
-
-#asignar las claves foráneas a las tablas
-
-
-
 
 #pedir si el usuario quiere ver datos, crear datos, eliminar datos o cambiar datos
 
@@ -321,7 +276,6 @@ def menuOpcionesPrincipal():
         print("===========================================")
         
         
-       # try:
         opcion = int(input("selecciona una opción: "))
         if opcion < 1 or opcion > 7 :
           print("Opción incorreca, introduce otra vez")
@@ -443,7 +397,7 @@ def borrarTabla():
   tablaParaBorrar = input("¿Qué tabla quieres borrar? ")
   try:
     mycursor.execute(f"DROP TABLE {tablaParaBorrar}")
-    mydb.commit
+    mydb.commit()
     print(f"tabla {tablaParaBorrar} borrada")
   except:
     print(f"La tabla  {tablaParaBorrar} no existe")
@@ -529,11 +483,53 @@ def crearNuevaTabla():
       sql = sql[:-2] + ')'
       global mycursor
       mycursor.execute(sql)
-      mydb.commit
+      mydb.commit()
       print("Tabla " +  nombreTabla  + " creada correctamente")
 
     except:
       print("Error al crear la tabla")
+
+
+
+
+
+crearTablaFranquicia()
+meterDatosIncialesFranquicia()
+
+
+
+crearTablaEstablecimientos()
+meterDatosInicialesEstablecimientos()
+
+
+
+crearTablaClientes()
+meterDatosInicialesClientes()
+
+
+
+crearTablaInicialReclamaciones()
+meterDatosIncialesReclamaciones()
+
+
+
+crearTablaCompras()
+meterDatosInicialesCompras()
+
+
+
+crearTablaDepartamentos()
+meterDatosInicialesDepartamentos()
+
+
+crearTablaIncidencias()
+meterDatosInicialesIncidencias()
+
+
+crearTablaEmpleados()
+meterDatosInicialesEmpleados()
+
+
 
 
 menuOpcionesPrincipal()
