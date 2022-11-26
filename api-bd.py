@@ -292,6 +292,7 @@ meterDatosInicialesIncidencias()
 
 crearTablaEmpleados()
 meterDatosInicialesEmpleados()
+
 """
 
 #asignar las claves foráneas a las tablas
@@ -345,6 +346,8 @@ def ejecutarOpcionMenuPrincipal(opcion):
       insertarDatosTabla()
   elif opcion == 3:
     borrarDatosDeUnaTabla()
+  elif opcion ==4:
+    modificarDatosTabla()
   elif opcion == 5:
     crearNuevaTabla()
   elif opcion == 6:
@@ -359,7 +362,7 @@ def mostrarNombreTablas():
   mycursor.execute("""SHOW TABLES""")
   myresult = mycursor.fetchall()
   print("-----------------------------------------------")
-  print("Existen las siguientes tablas")
+  #print("Existen las siguientes tablas")
   for x in myresult:
     print(x)
   print("-----------------------------------------------")
@@ -449,6 +452,31 @@ def borrarTabla():
 
 
 
+def modificarDatosTabla():
+  try:
+    mostrarNombreTablas()
+    tablaParaModificar = str(input("¿de que tabla quieres modificar datos?: "))
+    mycursor.execute(f"SELECT * FROM {tablaParaModificar}")
+    myresult = mycursor.fetchall()
+    for x in myresult:
+      print(x)
+    idSeleccionado = input("Qué id quieres modificar?: ")
+    mycursor.execute("DESCRIBE " + tablaParaModificar)
+    myresult = mycursor.fetchall()
+    for x in myresult:
+      print(x[0])
+    campoParaModificar = input(f"Qué campo quieres cambiar del elemento con id {idSeleccionado}?: ")
+    nuevoValor = input("Escribe el nuevo valor: ")
+    sql = f"UPDATE {tablaParaModificar} SET {campoParaModificar} = '{nuevoValor}' WHERE ID_{tablaParaModificar[:-1]} = {idSeleccionado}"
+    print(sql)
+    mycursor.execute(sql)
+    mydb.commit()
+    print(f"Tabla {tablaParaModificar} modificada correctamente")
+  except:
+    print(f"Error al intentar modificar tabla {tablaParaModificar}")
+
+
+
 def borrarDatosDeUnaTabla():
   mostrarNombreTablas()
   try:  
@@ -508,45 +536,5 @@ def crearNuevaTabla():
       print("Error al crear la tabla")
 
 
-
-def sqlPrueba():
-  # sql LIMT 1 ES PARA QUE SOLO SE MUESTRE UN ELEMENTO
-  print("cada elemento nuevo tiene que tener los siguientes atributos")
-  global mycursor
-  mycursor.execute(f"""DESCRIBE franquicia
-  """)
-  myresult = mycursor.fetchall()
-
-  for x in myresult:
-    print(x)
-  
-  
-
-
-#sqlPrueba()
-
 menuOpcionesPrincipal()
 
-
-
-#pendientes
-#hacer que al mostrar los datos de una tabla se muestre también el nombre del campo
-#try except para borrar elementos de una tabla 
-#try except menu principal
-#intentar meter en una funcion enseñar los campos de una tabla
-
-
-
-
-
-
-
-"""
-1. Elegir una tabla y MOSTRAR sus DATOS               HECHO
-2. Elegir una tabla e INSERTAR                        HECHO          
-3. Elegir una tabla y BORRAR sus DATOS
-4. Elegir una tabla y modificar sus DATOS
-5. Crear tabla                                        HECHO
-6. Borrar Tabla                                       HECHO
-7. Salir del programa                                 HECHO
-"""
