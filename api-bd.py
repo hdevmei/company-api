@@ -14,9 +14,9 @@ mycursor = mydb.cursor()
 #crear tablas con datos iniciales
 
 #franquicia
-def crearTablaFranquicia():
+def crearTablaFranquicias():
   global mycursor
-  mycursor.execute(""" CREATE TABLE franquicia (
+  mycursor.execute(""" CREATE TABLE franquicias (
   `id_franquicia` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `ganancias_totales` INT NULL,
@@ -278,7 +278,6 @@ def menuOpcionesPrincipal():
           break
         else:
           opcionCorrecta = True
- 
         opcionCorrecta = False
 
 
@@ -482,9 +481,38 @@ def crearNuevaTabla():
 
 
 
+userList = []
+
+def crearUsuario():
+  
+  global userList
+  userDic = {"userName": {}, "userPassword": {}, "userRol": {}}
+  while True:
+    global userList
+    userName = input("Introduce el nombre del usuario: ")
+    if len(userList) <= 0:
+      userDic["userName"] = userName
+      break
+    else:
+      for x in userList:
+          if userName == x["userName"]:
+            print("ERROR")
+          else:
+            userDic["userName"] = userName
+      if userName != None:
+          break
+  userDic["userPassword"]=input("Contraseña del usuario: ")
+  userDic["userRol"] = input("Que rol tiene?")
+  userList.append(userDic)
+  print(userList)
 
 
-crearTablaFranquicia()
+crearUsuario()
+
+
+
+"""
+crearTablaFranquicias()
 meterDatosIncialesFranquicia()
 
 
@@ -521,7 +549,8 @@ crearTablaEmpleados()
 meterDatosInicialesEmpleados()
 
 
+"""
 
 
-menuOpcionesPrincipal()
+#menuOpcionesPrincipal()
 
