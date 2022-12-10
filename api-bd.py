@@ -265,14 +265,19 @@ def menuOpcionesPrincipal():
         print("4. Elegir una tabla y modificar sus DATOS")
         print("5. Crear tabla")
         print("6. Borrar Tabla")
-        print("7. Salir del programa")
+        print("7. Crear usuario")
+        print("8. Borrar usuario")
+        print("9. Modificar usuario")
+        print("12. Salir del programa")
+        print("13. Ver lista de usuarios")
+        print("14 Salir del programa")
         print("===========================================")
         
         try:
           opcion = int(input("selecciona una opción: "))
-          if opcion < 1 or opcion > 7 :
+          if opcion < 1 or opcion > 14 :
             print("Opción no válida, introduce otra vez")
-          elif opcion == 7:
+          elif opcion == 14:
             continuar = False
             print("Has salido del programa")
             break
@@ -290,9 +295,9 @@ def menuOpcionesPrincipal():
 def ejecutarOpcionMenuPrincipal(opcion):
   
   if opcion ==1:
-      crearUsuario()
+      mostrarDatosTabla()
   elif opcion == 2:
-      borrarUsuario()
+      insertarDatosTabla()
   elif opcion == 3:
     borrarDatosDeUnaTabla()
   elif opcion ==4:
@@ -301,6 +306,15 @@ def ejecutarOpcionMenuPrincipal(opcion):
     crearNuevaTabla()
   elif opcion == 6:
       borrarTabla()
+  elif opcion == 7:
+    crearUsuario()
+  elif opcion == 8:
+    borrarUsuario()
+  elif opcion == 9:
+    modificarUsuario()
+  elif opcion == 13:
+    mostrarListaUsuarios()
+    
       
 
 
@@ -493,49 +507,67 @@ userList = []
 def crearUsuario():
     global userList
     userDic = {"userName": {}, "userPassword": {}, "userRol": {}}
-    while True:
-        global userList
-        userName = input("Introduce el nombre del usuario: ")
-        if len(userList) <= 0:
-            userDic["userName"] = userName
-            break
-        else:
-            for x in userList:
-                if userName == x["userName"]:
-                    print("ERROR")
-                else:
-                    userDic["userName"] = userName
-            if userName != None:
-                break
-    userDic["userPassword"]=input("Contraseña del usuario: ")
-    userDic["userRol"] = input("Que rol tiene?")
-    print("usuario creado correctamente")
+    inputUserName = input("Dime el noombre del usuario: ")
+    if len(userList) <= 0:
+            userDic["userName"] = inputUserName
+            inputUserPassword = input("Introduce la contraseña: ")
+            userDic['userPassword'] = inputUserPassword
+            inputUserRol = input("Introduce el rol: ")
+            userDic['userRol'] = inputUserRol
+            userList.append(userDic)
+    else:
+      for user in userList:
+        if user['userName'] != inputUserName:
+          userDic['userName'] = inputUserName
+          inputUserPassword = input("Introduce la contraseña: ")
+          userDic['userPassword'] = inputUserPassword
+          inputUserRol = input("Introduce el rol: ")
+          userDic['userRol'] = inputUserRol
+          userList.append(userDic)
+          break;
+        elif user['userName'] == inputUserName:
+          print("Ese usuario ya existe")
+        
+
 
 
 
 def borrarUsuario():
-  usuarioEliminar = input("Dime el usuario que quieres eliminar: ")
-  for usuario in userList:
-    if usuario['userName'] == usuarioEliminar:
-      try:
+  if len(userList) <= 0:
+    print("No hay ningún usuario")
+  else:  
+    for x in userList:
+      print(x["userName"])
+    usuarioEliminar = input("Selecciona el usuario que quieres eliminar: ")
+    for usuario in userList:
+      if usuario['userName'] == usuarioEliminar:
         userList.remove(usuario)
         print(f"Usuario {usuarioEliminar} eliminado correctamente")
-        print(userList)
-      except:
-        print("Error al eliminar el usuario")
-    elif usuario['userName'] != usuarioEliminar:
-      print("Ese usuario no existe")
+        return
+    print("No existe")
       
       
+      
+      
+def modificarUsuario():
+  usuarioModificar = input("Dime el nombre del usuario que quieres modificar: ")
+  for usuario in userList:
+    if usuario['userName'] == usuarioModificar:
+      print("Esite")
+    elif usuario['userName' != usuarioModificar]:
+      print("no existe")
+
+
+
+def mostrarListaUsuarios():
+  print(userList)
 
 
 
 
 
 
-
-
-""""
+"""
 crearTablaFranquicias()
 meterDatosIncialesFranquicia()
 
