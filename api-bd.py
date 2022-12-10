@@ -268,17 +268,20 @@ def menuOpcionesPrincipal():
         print("7. Salir del programa")
         print("===========================================")
         
-        
-        opcion = int(input("selecciona una opción: "))
-        if opcion < 1 or opcion > 7 :
-          print("Opción incorreca, introduce otra vez")
-        elif opcion == 7:
-          continuar = False
-          print("Has salido del programa")
-          break
-        else:
-          opcionCorrecta = True
-          ejecutarOpcionMenuPrincipal(opcion)
+        try:
+          opcion = int(input("selecciona una opción: "))
+          if opcion < 1 or opcion > 7 :
+            print("Opción no válida, introduce otra vez")
+          elif opcion == 7:
+            continuar = False
+            print("Has salido del programa")
+            break
+          else:
+            opcionCorrecta = True
+            ejecutarOpcionMenuPrincipal(opcion)
+        except:
+          print("Opción no válida,  intente de nuevo: ")
+         
  
         opcionCorrecta = False
 
@@ -287,9 +290,9 @@ def menuOpcionesPrincipal():
 def ejecutarOpcionMenuPrincipal(opcion):
   
   if opcion ==1:
-      mostrarDatosTabla()
+      crearUsuario()
   elif opcion == 2:
-      insertarDatosTabla()
+      borrarUsuario()
   elif opcion == 3:
     borrarDatosDeUnaTabla()
   elif opcion ==4:
@@ -484,7 +487,55 @@ def crearNuevaTabla():
 
 
 
-"""""
+
+userList = []
+
+def crearUsuario():
+    global userList
+    userDic = {"userName": {}, "userPassword": {}, "userRol": {}}
+    while True:
+        global userList
+        userName = input("Introduce el nombre del usuario: ")
+        if len(userList) <= 0:
+            userDic["userName"] = userName
+            break
+        else:
+            for x in userList:
+                if userName == x["userName"]:
+                    print("ERROR")
+                else:
+                    userDic["userName"] = userName
+            if userName != None:
+                break
+    userDic["userPassword"]=input("Contraseña del usuario: ")
+    userDic["userRol"] = input("Que rol tiene?")
+    print("usuario creado correctamente")
+
+
+
+def borrarUsuario():
+  usuarioEliminar = input("Dime el usuario que quieres eliminar: ")
+  for usuario in userList:
+    if usuario['userName'] == usuarioEliminar:
+      try:
+        userList.remove(usuario)
+        print(f"Usuario {usuarioEliminar} eliminado correctamente")
+        print(userList)
+      except:
+        print("Error al eliminar el usuario")
+    elif usuario['userName'] != usuarioEliminar:
+      print("Ese usuario no existe")
+      
+      
+
+
+
+
+
+
+
+
+""""
 crearTablaFranquicias()
 meterDatosIncialesFranquicia()
 
@@ -525,3 +576,11 @@ meterDatosInicialesEmpleados()
 
 
 menuOpcionesPrincipal()
+
+
+
+
+
+
+
+
