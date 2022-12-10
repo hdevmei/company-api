@@ -278,6 +278,8 @@ def menuOpcionesPrincipal():
           break
         else:
           opcionCorrecta = True
+          ejecutarOpcionMenuPrincipal(opcion)
+ 
         opcionCorrecta = False
 
 
@@ -481,37 +483,8 @@ def crearNuevaTabla():
 
 
 
-userList = []
 
-def crearUsuario():
-  
-  global userList
-  userDic = {"userName": {}, "userPassword": {}, "userRol": {}}
-  while True:
-    global userList
-    userName = input("Introduce el nombre del usuario: ")
-    if len(userList) <= 0:
-      userDic["userName"] = userName
-      break
-    else:
-      for x in userList:
-          if userName == x["userName"]:
-            print("ERROR")
-          else:
-            userDic["userName"] = userName
-      if userName != None:
-          break
-  userDic["userPassword"]=input("Contraseña del usuario: ")
-  userDic["userRol"] = input("Que rol tiene?")
-  userList.append(userDic)
-  print(userList)
-
-
-crearUsuario()
-
-
-
-"""
+"""""
 crearTablaFranquicias()
 meterDatosIncialesFranquicia()
 
@@ -547,10 +520,8 @@ meterDatosInicialesIncidencias()
 
 crearTablaEmpleados()
 meterDatosInicialesEmpleados()
-
-
 """
 
 
-#menuOpcionesPrincipal()
 
+menuOpcionesPrincipal()
