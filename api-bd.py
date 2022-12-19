@@ -29,7 +29,7 @@ def crearTablaFranquicias():
   
 def meterDatosIncialesFranquicia():
   global mycursor
-  sql = "INSERT INTO franquicia (nombre, ganancias_totales, perdidas_totales, descripcion) VALUES (%s, %s, %s, %s)"
+  sql = "INSERT INTO franquicias (nombre, ganancias_totales, perdidas_totales, descripcion) VALUES (%s, %s, %s, %s)"
   val = [
     ('Burguer King', 2400000, 300000, 'Fundada en 1954, Burger King es la segunda cadena de hamburguesas de comida rápida más grande del mundo. El hogar original de Whopper, nuestro compromiso con los ingredientes de primera calidad, las recetas exclusivas y las experiencias gastronómicas familiares es lo que ha definido nuestra marca durante más de 50 años exitosos.'),
     ('Telepizza', 2200000, 300000, 'Telepizza nació en Madrid en 1987 como una empresa familiar con claro ímpetu por la innovación y constante foco en la calidad de sus productos. Siendo de esta manera un pionero en el delivery de comida de calidad a casa.'),
@@ -244,20 +244,191 @@ def meterDatosInicialesEmpleados():
   ]
   mycursor.executemany(sql, val)
   mydb.commit()
-  print("datos iniciales incidencias metidos")
+  print("datos iniciales empleados metidos")
 
 
 
 
 
 
-def menuOpcionesPrincipal():
+
+######## Parte de usuarios y roles ##################################################################################################################################
+#########################################################################################################################################################################
+
+def crearUsuariosYMeterDatosInicialesUsuarios():
+  mycursor.execute("CREATE TABLE IF NOT EXISTS usuarios (id_usuario INT AUTO_INCREMENT PRIMARY KEY, nombre_usuario VARCHAR(50), contrasena_usuario VARCHAR(50), rol VARCHAR(50))")
+  sql = "INSERT INTO usuarios (nombre_usuario,contrasena_usuario,rol) VALUES (%s, %s, %s)"
+  val = [("senior_cangrejo", "dinero", "administrador"),("bob_esponja", "hamburguesa", "basico"),("arenita", "ciencia", "lector")]
+  mycursor.executemany(sql, val)
+  mydb.commit()
+  print("Tabla usuarios con datos iniciales metidos creada")
+  
+def crearRolesYMeterDatosIniciales():
+  mycursor.execute("CREATE TABLE IF NOT EXISTS roles (id_rol INT AUTO_INCREMENT PRIMARY KEY, rol VARCHAR(50))")
+  sql = "INSERT INTO roles (rol) VALUES (%s)"
+  val = [("administrador",),("basico",),("lector",)]
+  mycursor.executemany(sql, val)
+  mydb.commit()
+  print("Tabla roles con datos iniciales metidos creada")
+
+#####################################################################
+
+#Crear Usuarios
+def crearUsuario():
+  global listaTabla
+  print("Dime el nombre del usuario: ")
+  nombreUsuario = input()
+  print("Dime la contraseña del usuario: ")
+  contrasenaUsuario = input()
+
+  print("Elige el Rol del Usuario, Opciones:")
+  mycursor.execute("SELECT rol FROM roles")
+  roles = mycursor.fetchall()
+  print(roles)
+  rolElegido = input()
+
+  sql = "INSERT INTO usuarios (nombre_usuario,contrasena_usuario,rol) VALUES (%s, %s, %s)"
+  val = [(nombreUsuario,contrasenaUsuario,rolElegido)]
+  mycursor.executemany(sql,val)
+  mydb.commit()
+  print("Usuario creado")
+
+
+#Modificar Usuarios
+def modificarUsuario():
+  mycursor.execute("SELECT nombre_usuario FROM usuarios")
+  ListaDatos = mycursor.fetchall()
+  print(ListaDatos)
+
+  print("Escribe el Nombre del Usuario que quieras Modificar: ")
+  usuario = input()
+  mycursor.execute("SELECT * FROM usuarios WHERE nombre_usuario = '" + usuario+"'")
+  usuarioInfo = mycursor.fetchall()
+  
+  
+  print("¿Qué deseas modificar? Escribelo tal cual: nombre_usuario, contrasena_usuario o rol")
+  print(usuarioInfo)
+
+  campoModificar = input()
+  if campoModificar == "nombre_usuario" or campoModificar == "contrasena_usuario" or campoModificar == "rol":
+    if campoModificar == "rol":
+      mycursor.execute("SELECT rol FROM roles")
+      mycursor.fetchall()
+      print("Escribe el nuevo rol "+ campoModificar)
+      print("Estos son los Roles disponibles que puedes utilizar:")
+      mycursor.execute("SELECT rol FROM roles")
+      roles = mycursor.fetchall() 
+      print(roles)
+      nuevoRol = input()
+      sql = f"UPDATE usuarios SET rol = '{nuevoRol}' WHERE nombre_usuario = '{usuario}'"
+      mycursor.execute(sql)
+      print(f"usuario {usuario} modificado correctamente")
+    
+    elif campoModificar == "contrasena_usuario":
+      nuevaContrasena = input("Dime la nueva contraseña: ")
+      sql = f"UPDATE usuarios SET contrasena_usuario = '{nuevaContrasena}' WHERE nombre_usuario = '{usuario}'"
+      print(sql)
+      mycursor.execute(sql)
+      print(f"usuario {usuario} modificado correctamente")
+      
+    elif campoModificar == "nombre_usuario":
+      nuevoNombre = input("Introduce el nuevo nombre: ")
+      sql = f"UPDATE usuarios SET nombre_usuario = '{nuevoNombre}' WHERE nombre_usuario = '{usuario}'"
+      print(sql)
+      mycursor.execute(sql)
+      print(f"usuario {usuario} modificado correctamente")
+
+      
+  else:
+    print("Error al modificar usuario")
+
+  mydb.commit()  
+
+
+
+
+
+def BorrarUsuario():
+  print("Escribe el nombre del usuario que quieras Borrar:")
+  mycursor.execute("SELECT nombre_usuario FROM usuarios")
+  usuarios = mycursor.fetchall()
+  print(usuarios)
+  usuario = input()
+  sql = f"DELETE FROM usuarios WHERE nombre_usuario = '{usuario}'"
+  mycursor.execute(sql)
+  mydb.commit()
+
+
+
+
+#Crear nuevo rol
+def crearRol():
+  print("Hay estos roles:")
+  mycursor.execute("SELECT Rol FROM Roles")
+  roles = mycursor.fetchall() 
+  print(roles)
+  print("Introduce el nombre del nuevo rol: ")
+  nuevoRol = input()
+  sql = "INSERT INTO Roles (Rol) VALUES (%s)"
+  val = [(nuevoRol,)]
+  mycursor.executemany(sql, val)
+  mydb.commit()
+
+
+
+
+def borrarRol():
+  print("Escribe el rol que quieres borrar: ")
+  mycursor.execute("SELECT rol FROM roles")
+  roles = mycursor.fetchall()
+  print(roles)
+  rol = input()
+  sql = f"DELETE FROM roles WHERE rol = '{rol}'"
+  mycursor.execute(sql)
+  mydb.commit()
+
+
+
+###########################################################################################
+
+
+
+def inicioSesion():
+    UsuarioExiste = False
+    while (not UsuarioExiste):
+      print("Escribe tu Nombre de usuario")
+      mycursor.execute("SELECT nombre_usuario, contrasena_usuario, rol FROM usuarios")
+      usuarios = mycursor.fetchall()
+      print(usuarios)
+      usuario = input("Usuario: ")
+      contrasena = input("Contraseña: ")
+      for i in range(len(usuarios)):
+        if str(usuarios[i][0]) == usuario and str(usuarios[i][1]) == contrasena:
+          UsuarioExiste = True
+          print("Credenciales correctas")
+          if str(usuarios[i][2]) == "administrador":
+            menuOpcionesAdministrador()
+          elif str(usuarios[i][2]) == "basico":
+            menuOpcionesBasico()
+          elif str(usuarios[i][2]) == "lector":
+            menuOpcionesLector()
+          else:
+            print("El rol de este usuario no hace nada.")
+          break
+        elif i == len(usuarios)-1:
+          print("El usuario o la contrasena NO son correctas, vuelve a intentarlo")
+    
+  
+
+
+#########Administrador################################################
+def menuOpcionesAdministrador():
   continuar = True
   while(continuar):
     opcionCorrecta = False
     while(not opcionCorrecta):
       
-        print("\n \n \n \n =======  MENÚ PRINCIPAL  =====================")
+        print("\n \n \n \n =======  MENÚ PRINCIPAL ADMINISTRADOR  =====================")
         print("Elige una opción")
         print("1. Elegir una tabla y MOSTRAR sus DATOS")
         print("2. Elegir una tabla e INSERTAR ")
@@ -265,35 +436,30 @@ def menuOpcionesPrincipal():
         print("4. Elegir una tabla y modificar sus DATOS")
         print("5. Crear tabla")
         print("6. Borrar Tabla")
-        print("7. Crear usuario")
-        print("8. Borrar usuario")
-        print("9. Modificar usuario")
+        print("7. Crear Usuarios")
+        print("8. Borrar Usuarios")
+        print("9. Modificar usuarios")
+        print("10. Crear Roles de usuario")
+        print("11. Borrar roles")
         print("12. Salir del programa")
-        print("13. Ver lista de usuarios")
-        print("14 Salir del programa")
         print("===========================================")
         
-        try:
-          opcion = int(input("selecciona una opción: "))
-          if opcion < 1 or opcion > 14 :
-            print("Opción no válida, introduce otra vez")
-          elif opcion == 14:
-            continuar = False
-            print("Has salido del programa")
-            break
-          else:
-            opcionCorrecta = True
-            ejecutarOpcionMenuPrincipal(opcion)
-        except:
-          print("Opción no válida,  intente de nuevo: ")
-         
+        
+        opcion = int(input("selecciona una opción: "))
+        if opcion < 1 or opcion > 13 :
+          print("Opción incorreca, introduce otra vez")
+        elif opcion == 12:
+          continuar = False
+          print("Has salido del programa")
+          break
+        else:
+          opcionCorrecta = True
+          ejecutarOpcionMenuAdministrador(opcion)
  
         opcionCorrecta = False
 
 
-
-def ejecutarOpcionMenuPrincipal(opcion):
-  
+def ejecutarOpcionMenuAdministrador(opcion):
   if opcion ==1:
       mostrarDatosTabla()
   elif opcion == 2:
@@ -309,13 +475,91 @@ def ejecutarOpcionMenuPrincipal(opcion):
   elif opcion == 7:
     crearUsuario()
   elif opcion == 8:
-    borrarUsuario()
-  elif opcion == 9:
+   BorrarUsuario()
+  elif opcion== 9:
     modificarUsuario()
-  elif opcion == 13:
-    mostrarListaUsuarios()
+  elif opcion == 10:
+    crearRol()
+  elif opcion == 11:
+    borrarRol()
     
       
+
+  
+######Basico############################################################
+def menuOpcionesBasico():
+  continuar = True
+  while(continuar):
+    opcionCorrecta = False
+    while(not opcionCorrecta):
+      
+        print("\n \n \n \n =======  MENÚ PRINCIPAL BASICO =====================")
+        print("Elige una opción")
+        print("1. Elegir una tabla y MOSTRAR sus DATOS")
+        print("2. Elegir una tabla e INSERTAR ")
+        print("3. Elegir una tabla y BORRAR sus DATOS")
+        print("4. Elegir una tabla y modificar sus DATOS")
+        print("5. Salir del programa")
+        print("===========================================")
+        
+        opcion = int(input("selecciona una opción: "))
+        if opcion < 1 or opcion > 5 :
+          print("Opción incorreca, introduce otra vez")
+        elif opcion == 5:
+          continuar = False
+          print("Has salido del programa")
+          break
+        else:
+          opcionCorrecta = True
+          ejecutarOpcionesMenuBasico(opcion)
+ 
+        opcionCorrecta = False
+
+
+def ejecutarOpcionesMenuBasico(opcion):
+  if opcion ==1:
+      mostrarDatosTabla()
+  elif opcion == 2:
+      insertarDatosTabla()
+  elif opcion == 3:
+    borrarDatosDeUnaTabla()
+  elif opcion ==4:
+    modificarDatosTabla()
+    
+    
+    
+ #####Lector##########################################################
+def menuOpcionesLector():
+  continuar = True
+  while(continuar):
+    opcionCorrecta = False
+    while(not opcionCorrecta):
+      
+        print("\n \n \n \n =======  MENÚ PRINCIPAL LECTOR =====================")
+        print("Elige una opción")
+        print("1. Elegir una tabla y MOSTRAR sus DATOS")
+        print("2. Salir del programa")
+        print("===========================================")
+        
+        opcion = int(input("selecciona una opción: "))
+        if opcion < 1 or opcion > 2 :
+          print("Opción incorreca, introduce otra vez")
+        elif opcion == 2:
+          continuar = False
+          print("Has salido del programa")
+          break
+        else:
+          opcionCorrecta = True
+          ejecutarOpcionesMenuBasico(opcion)
+
+        opcionCorrecta = False
+      
+
+def ejecutarOpcionesMenuLector(opcion):
+    if opcion ==1:
+      mostrarDatosTabla()
+      
+    
 
 
 ##### Funcion ver que tablas hay y será compartida
@@ -502,70 +746,11 @@ def crearNuevaTabla():
 
 
 
-userList = []
+#LLAMADA A FUNCIONES
+#DESCOMENTAR FUNCIONES EN TU BASE DE DATOS PARA QUE CREEN LAS TABLAS Y SE RELLENEN, una vez creadas comentar las funciones porque sale error de tablas ya creadas
+#PARA QUE FUNCIONE EL PROGRAMA NUNCA COMENTAR LA FUNCION INICIOSESION()
 
-def crearUsuario():
-    global userList
-    userDic = {"userName": {}, "userPassword": {}, "userRol": {}}
-    inputUserName = input("Dime el noombre del usuario: ")
-    if len(userList) <= 0:
-            userDic["userName"] = inputUserName
-            inputUserPassword = input("Introduce la contraseña: ")
-            userDic['userPassword'] = inputUserPassword
-            inputUserRol = input("Introduce el rol: ")
-            userDic['userRol'] = inputUserRol
-            userList.append(userDic)
-    else:
-      for user in userList:
-        if user['userName'] != inputUserName:
-          userDic['userName'] = inputUserName
-          inputUserPassword = input("Introduce la contraseña: ")
-          userDic['userPassword'] = inputUserPassword
-          inputUserRol = input("Introduce el rol: ")
-          userDic['userRol'] = inputUserRol
-          userList.append(userDic)
-          break;
-        elif user['userName'] == inputUserName:
-          print("Ese usuario ya existe")
-        
-
-
-
-
-def borrarUsuario():
-  if len(userList) <= 0:
-    print("No hay ningún usuario")
-  else:  
-    for x in userList:
-      print(x["userName"])
-    usuarioEliminar = input("Selecciona el usuario que quieres eliminar: ")
-    for usuario in userList:
-      if usuario['userName'] == usuarioEliminar:
-        userList.remove(usuario)
-        print(f"Usuario {usuarioEliminar} eliminado correctamente")
-        return
-    print("No existe")
-      
-      
-      
-      
-def modificarUsuario():
-  usuarioModificar = input("Dime el nombre del usuario que quieres modificar: ")
-  for usuario in userList:
-    if usuario['userName'] == usuarioModificar:
-      print("Esite")
-    elif usuario['userName' != usuarioModificar]:
-      print("no existe")
-
-
-
-def mostrarListaUsuarios():
-  print(userList)
-
-
-
-
-
+print("========================================")
 
 """
 crearTablaFranquicias()
@@ -603,16 +788,15 @@ meterDatosInicialesIncidencias()
 
 crearTablaEmpleados()
 meterDatosInicialesEmpleados()
+
+
+crearUsuariosYMeterDatosInicialesUsuarios()
+crearRolesYMeterDatosIniciales()
+
 """
+print("---------------------------------------------")
 
-
-
-menuOpcionesPrincipal()
-
-
-
-
-
-
-
-
+########################################################
+###Funcion que siempre tiene que estar ------>##########
+########################################################
+inicioSesion()
